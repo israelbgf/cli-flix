@@ -1,3 +1,6 @@
-.idea
-vlc-flix.iml
 .node_modules/
+.idea/
+.coverage/
+dist/
+vlc-flix.iml
+.npm-debug.log
