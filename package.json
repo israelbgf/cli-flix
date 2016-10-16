@@ -1,0 +1,17 @@
+{
+  "name": "vlc-flix",
+  "version": "1.0.0",
+  "description": "CLI for streaming torrents to your VLC with subtitles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Israel BG Fonseca",
+  "license": "ISC",
+  "dependencies": {
+    "peerflix": "^0.35.1",
+    "shelljs": "^0.7.4",
+    "subtitler": "^2.6.0",
+    "thepiratebay": "^1.3.2"
+  }
+}
