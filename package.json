@@ -34,6 +34,7 @@
     "babel-preset-es2015": "^6.14.0",
     "chai": "^3.5.0",
     "chokidar": "^1.6.0",
+    "download": "^5.0.2",
     "eslint": "^3.5.0",
     "eslint-config-google": "^0.6.0",
     "karma": "^1.3.0",
@@ -52,6 +53,7 @@
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
     "subtitler": "^2.6.0",
+    "tar.gz": "^1.0.5",
     "thepiratebay": "^1.3.2",
     "uglify-js": "^2.7.3"
   },
