@@ -1,10 +1,10 @@
-require('shelljs/global')
-
+var shell = require('shelljs')
 var download = require('download')
 var opensubtitles = require('subtitler')
 var zlib = require('zlib')
 var fs = require('fs')
 var path = require('path')
+var PirateBay = require('thepiratebay')
 
 class SubtitleGateway {
 
@@ -15,7 +15,7 @@ class SubtitleGateway {
                     opensubtitles.api.searchForTitle(token, language, name).then(function (results) {
                         results = results.map((item) => {
                             return {
-                                name: item.SubFileName,
+                                name: item.SubFileName.replace('.srt', ''),
                                 link: item.SubDownloadLink,
                                 languageName: item.LanguageName,
                                 downloadCount: item.SubDownloadsCnt,
@@ -49,7 +49,7 @@ class UncompressionGateway {
         const input = fs.createReadStream(url)
         const output = fs.createWriteStream(dest)
         input.pipe(gunzip).pipe(output)
-        output.on('close', function() {
+        output.on('close', function () {
             input.unpipe(gunzip)
             input.unpipe(output)
         })
@@ -57,10 +57,39 @@ class UncompressionGateway {
 
 }
 
+class TorrentGateway {
+
+    search(name) {
+        return PirateBay.search(name, {
+            category: 'video',
+            orderBy: 'seeds',
+            sortBy: 'desc',
+            filter: {
+                verified: true
+            }
+        })
+    }
+
+}
+
+class VLCTorrentPlayerGateway {
+    play(magnetLink, subtitle) {
+        shell.exec(`peerflix '${magnetLink}' --vlc --subtitles ${subtitle}`)
+    }
+}
+
 new SubtitleGateway().searchSubtitles('Westworld S01E02', 'pob', (results) => {
-    new DownloadGateway().download(results[0].link, '.').then((file) => {
-        let filename = path.basename(results[0].link)
-        new UncompressionGateway().uncompress(filename, `${filename}.srt`)
+    var mainSubtitle = results[0]
+    new DownloadGateway().download(mainSubtitle.link, '.').then(() => {
+        let subtitleLink = path.basename(mainSubtitle.link)
+        let subtitleDest = `${subtitleLink}.srt`
+
+        new UncompressionGateway().uncompress(subtitleLink, subtitleDest)
+        new TorrentGateway().search(mainSubtitle.name).then(results => {
+            let firstResult = results[0]
+            new VLCTorrentPlayerGateway().play(firstResult.magnetLink, subtitleDest)
+        }).catch(err => {
+            console.log(err)
+        })
     })
 })
-
