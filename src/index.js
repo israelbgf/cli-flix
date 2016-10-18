@@ -1,5 +1,5 @@
 var shell = require('shelljs')
-var download = require('download')
+var http = require('http')
 var opensubtitles = require('subtitler')
 var zlib = require('zlib')
 var fs = require('fs')
@@ -8,28 +8,31 @@ var PirateBay = require('thepiratebay')
 
 class SubtitleGateway {
 
-    searchSubtitles(name, language, callback) {
-        opensubtitles.api.login()
-            .then(function (token) {
-                try {
-                    opensubtitles.api.searchForTitle(token, language, name).then(function (results) {
-                        results = results.map((item) => {
-                            return {
-                                name: item.SubFileName.replace('.srt', ''),
-                                link: item.SubDownloadLink,
-                                languageName: item.LanguageName,
-                                downloadCount: item.SubDownloadsCnt,
-                                seriesSeason: item.SeriesSeason,
-                                seriesEpisode: item.SeriesEpisode,
-                                userRank: item.UserRank
-                            }
+    searchSubtitles(name, language) {
+        return new Promise((resolve, reject) => {
+            opensubtitles.api.login()
+                .then(function (token) {
+                    try {
+                        opensubtitles.api.searchForTitle(token, language, name).then(function (results) {
+                            results = results.map((item) => {
+                                return {
+                                    name: item.SubFileName.replace('.srt', ''),
+                                    link: item.SubDownloadLink,
+                                    languageName: item.LanguageName,
+                                    downloadCount: item.SubDownloadsCnt,
+                                    seriesSeason: item.SeriesSeason,
+                                    seriesEpisode: item.SeriesEpisode,
+                                    userRank: item.UserRank
+                                }
+                            })
+                            resolve(results)
                         })
-                        callback(results)
-                    })
-                } finally {
-                    opensubtitles.api.logout(token)
-                }
-            })
+                    } finally {
+                        opensubtitles.api.logout(token)
+                    }
+                }).catch(reject)
+
+        })
     }
 
 }
@@ -37,7 +40,14 @@ class SubtitleGateway {
 class DownloadGateway {
 
     download(url, dest) {
-        return download(url, dest)
+        return new Promise((resolve, reject) => {
+            var file = fs.createWriteStream(dest)
+            http.get(url, function (response) {
+                response.pipe(file).on('finish', ()=> {
+                    resolve()
+                })
+            })
+        })
     }
 
 }
@@ -74,22 +84,55 @@ class TorrentGateway {
 
 class VLCTorrentPlayerGateway {
     play(magnetLink, subtitle) {
-        shell.exec(`peerflix '${magnetLink}' --vlc --subtitles ${subtitle}`)
+        let peerflixExcutable = path.join(__dirname, 'node_modules', 'peerflix', 'app.js')
+        shell.exec(`${peerflixExcutable} '${magnetLink}' --vlc --subtitles ${subtitle}`)
     }
 }
 
-new SubtitleGateway().searchSubtitles('Westworld S01E02', 'pob', (results) => {
-    var mainSubtitle = results[0]
-    new DownloadGateway().download(mainSubtitle.link, '.').then(() => {
-        let subtitleLink = path.basename(mainSubtitle.link)
-        let subtitleDest = `${subtitleLink}.srt`
+class FindAndPlayTorrentUsecase {
 
-        new UncompressionGateway().uncompress(subtitleLink, subtitleDest)
-        new TorrentGateway().search(mainSubtitle.name).then(results => {
-            let firstResult = results[0]
-            new VLCTorrentPlayerGateway().play(firstResult.magnetLink, subtitleDest)
-        }).catch(err => {
-            console.log(err)
-        })
-    })
-})
+    constructor(subtitleGateway, downloadGateway, uncompressionGateway,
+                torrentGateway, vlcTorrentPlayerGateway) {
+        this.subtitleGateway = subtitleGateway
+        this.downloadGateway = downloadGateway
+        this.uncompressionGateway = uncompressionGateway
+        this.torrentGateway = torrentGateway
+        this.vlcTorrentPlayerGateway = vlcTorrentPlayerGateway
+    }
+
+    execute(movieToFind, subtitleLanguage) {
+        this.subtitleGateway.searchSubtitles(movieToFind, subtitleLanguage)
+            .then((results) => {
+                return results[0]
+            })
+            .then((choosedSubtitle) => {
+                this.downloadGateway.download(choosedSubtitle.link, '.')
+                    .then(() => {
+                        let subtitleLink = path.basename(choosedSubtitle.link)
+                        let subtitleDest = `${subtitleLink}.srt`
+
+                        this.uncompressionGateway.uncompress(subtitleLink, subtitleDest)
+                        this.torrentGateway.search(choosedSubtitle.name)
+                            .then(results => {
+                                return results[0]
+                            })
+                            .then((firstResult) => {
+                                this.vlcTorrentPlayerGateway.play(firstResult.magnetLink, subtitleDest)
+                            })
+                    })
+            })
+
+    }
+
+}
+
+var movieToFind = process.argv[2]
+var subtitleLanguage = process.argv[3]
+
+new FindAndPlayTorrentUsecase(
+    new SubtitleGateway(),
+    new DownloadGateway(),
+    new UncompressionGateway(),
+    new TorrentGateway(),
+    new VLCTorrentPlayerGateway
+).execute(movieToFind, subtitleLanguage)
