@@ -6,37 +6,6 @@ var fs = require('fs')
 var path = require('path')
 var PirateBay = require('thepiratebay')
 
-class SubtitleGateway {
-
-    searchSubtitles(name, language) {
-        return new Promise((resolve, reject) => {
-            opensubtitles.api.login()
-                .then(function (token) {
-                    try {
-                        opensubtitles.api.searchForTitle(token, language, name).then(function (results) {
-                            results = results.map((item) => {
-                                return {
-                                    name: item.SubFileName.replace('.srt', ''),
-                                    link: item.SubDownloadLink,
-                                    languageName: item.LanguageName,
-                                    downloadCount: item.SubDownloadsCnt,
-                                    seriesSeason: item.SeriesSeason,
-                                    seriesEpisode: item.SeriesEpisode,
-                                    userRank: item.UserRank
-                                }
-                            })
-                            resolve(results)
-                        })
-                    } finally {
-                        opensubtitles.api.logout(token)
-                    }
-                }).catch(reject)
-
-        })
-    }
-
-}
-
 class DownloadGateway {
 
     download(url, dest) {
@@ -126,13 +95,17 @@ class FindAndPlayTorrentUsecase {
 
 }
 
-var movieToFind = process.argv[2]
-var subtitleLanguage = process.argv[3]
 
-new FindAndPlayTorrentUsecase(
-    new SubtitleGateway(),
-    new DownloadGateway(),
-    new UncompressionGateway(),
-    new TorrentGateway(),
-    new VLCTorrentPlayerGateway
-).execute(movieToFind, subtitleLanguage)
+//function run() {
+//    var movieToFind = process.argv[2]
+//    var subtitleLanguage = process.argv[3]
+//
+//    new FindAndPlayTorrentUsecase(
+//        new SubtitleGateway(),
+//        new DownloadGateway(),
+//        new UncompressionGateway(),
+//        new TorrentGateway(),
+//        new VLCTorrentPlayerGateway
+//    ).execute(movieToFind, subtitleLanguage)
+//}
+
