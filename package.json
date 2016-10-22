@@ -13,7 +13,7 @@
     "thepiratebay": "^1.3.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/mocha/bin/mocha $(find src -name '*Test.js')"
   },
   "repository": {
     "type": "git",
