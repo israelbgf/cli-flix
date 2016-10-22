@@ -1,11 +1,19 @@
 var it = require('mocha').it
 var describe = require('mocha').describe
-var HttpDownloadGatewayNode = require('./HttpDownloadGatewayNode')
+var beforeEach = require('mocha').beforeEach
 var fs = require('fs')
 var path = require('path')
 var assert = require('chai').assert
 
+var fixtures = require('../../test/FixtureUtils.js')
+var HttpDownloadGatewayNode = require('./HttpDownloadGatewayNode')
+
+
 describe('HttpDownloadGatewayNode', function () {
+
+    beforeEach(() => {
+        fixtures.prepareOutputFolder()
+    })
 
     it('should return download file from internet', function () {
         let fileToDownload = 'robots.txt'

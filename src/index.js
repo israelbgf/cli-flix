@@ -6,35 +6,6 @@ var fs = require('fs')
 var path = require('path')
 var PirateBay = require('thepiratebay')
 
-class DownloadGateway {
-
-    download(url, dest) {
-        return new Promise((resolve, reject) => {
-            var file = fs.createWriteStream(dest)
-            http.get(url, function (response) {
-                response.pipe(file).on('finish', ()=> {
-                    resolve()
-                })
-            })
-        })
-    }
-
-}
-
-class UncompressionGateway {
-
-    uncompress(url, dest) {
-        const gunzip = zlib.createGunzip()
-        const input = fs.createReadStream(url)
-        const output = fs.createWriteStream(dest)
-        input.pipe(gunzip).pipe(output)
-        output.on('close', function () {
-            input.unpipe(gunzip)
-            input.unpipe(output)
-        })
-    }
-
-}
 
 class TorrentGateway {
 
