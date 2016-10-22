@@ -1,3 +1,6 @@
+var path = require('path')
+
+
 class FindAndPlayUsecase {
 
     constructor(subtitleGateway, downloadGateway, uncompressionGateway,
@@ -15,20 +18,18 @@ class FindAndPlayUsecase {
                 var choosedSubtitle = subtitles[0]
                 this.downloadGateway.download(choosedSubtitle.link, '.')
                     .then((downloadedSubtitle) => {
-                        this.uncompressionGateway.uncompress(downloadedSubtitle, './subtitle.srt')
+                        let subtitleLocation = path.join(path.dirname(downloadedSubtitle), 'subtitle.srt')
+                        this.uncompressionGateway.uncompress(downloadedSubtitle, subtitleLocation)
                             .then(() => {
-                                    this.torrentGateway.search(choosedSubtitle.name)
+                                    this.torrentGateway.search(choosedSubtitle.name.replace('.srt', ''))
                                         .then((results) => {
                                             let firstResult = results[0]
-                                            this.vlcTorrentPlayerGateway.play(firstResult.magnetLink, './subtitle.srt')
+                                            this.vlcTorrentPlayerGateway.play(firstResult.magnetLink, subtitleLocation)
                                         })
                                 }
                             )
                     })
-            }).catch((err) => {
-            console.log(err)
-        })
-
+            })
     }
 
 }

@@ -7,7 +7,7 @@ class HttpDownloadGateway {
     download(url, destinationFolder) {
         return new Promise((resolve, reject) => {
             let fileName = path.basename(url)
-            var downloadedFileLocation = path.join(destinationFolder, fileName);
+            var downloadedFileLocation = path.resolve(path.join(destinationFolder, fileName))
             var file = fs.createWriteStream(downloadedFileLocation)
             http.get(url, (response) => {
                 response.pipe(file).on('finish', ()=> {
