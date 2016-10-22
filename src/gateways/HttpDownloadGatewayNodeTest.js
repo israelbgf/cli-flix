@@ -1,8 +1,8 @@
 var it = require('mocha').it
 var describe = require('mocha').describe
 var HttpDownloadGatewayNode = require('./HttpDownloadGatewayNode')
-var fs = require('fs');
-var path = require('path');
+var fs = require('fs')
+var path = require('path')
 var assert = require('chai').assert
 
 describe('HttpDownloadGatewayNode', function () {
