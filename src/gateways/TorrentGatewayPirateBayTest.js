@@ -9,7 +9,7 @@ describe('TorrentGatewayPirateBay', function () {
     this.timeout(5000)
 
     it('should return torrents ordered by seeds when search is done', function () {
-        return new TorrentGatewayPirateBay().search('shichinin no samurai 1954')
+        return new TorrentGatewayPirateBay().searchTorrents('shichinin no samurai 1954')
             .then((results) => {
                 assert.isAtLeast(results.length, 2);
                 let result = results[0];
