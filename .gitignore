@@ -1,6 +1,7 @@
 .node_modules/
 .idea/
 .coverage/
+test/output
 dist/
 vlc-flix.iml
 .npm-debug.log
