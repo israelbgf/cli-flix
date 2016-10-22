@@ -10,6 +10,8 @@ describe('SubtitleGatewayOpensubtitles', function () {
         return new SubtitleGatewayOpensubtitles().searchSubtitles('shichi nin no samurai 1954', 'pob')
             .then((results) => {
                 let result = results[0]
+                console.log(result)
+
                 assert.equal(result.name, 'Shichinin Samurai CD1.sub')
                 assert.include(result.link, "http://dl.opensubtitles.org/en/download")
                 assert.include(result.languageName, 'Portuguese')

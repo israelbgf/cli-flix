@@ -7,21 +7,6 @@ var path = require('path')
 var PirateBay = require('thepiratebay')
 
 
-class TorrentGateway {
-
-    search(name) {
-        return PirateBay.search(name, {
-            category: 'video',
-            orderBy: 'seeds',
-            sortBy: 'desc',
-            filter: {
-                verified: true
-            }
-        })
-    }
-
-}
-
 class VLCTorrentPlayerGateway {
     play(magnetLink, subtitle) {
         let peerflixExcutable = path.join(__dirname, 'node_modules', 'peerflix', 'app.js')
