@@ -4,11 +4,12 @@ var SubtitleGatewayOpensubtitles = require('./SubtitleGatewayOpensubtitles')
 var assert = require('chai').assert
 
 describe('SubtitleGatewayOpensubtitles', function () {
-    this.timeout(5000);
+    this.timeout(50000);
 
     it('should return subtitles from OpenSubtitles', function () {
-        return new SubtitleGatewayOpensubtitles().searchSubtitles('shichi nin no samurai 1954', 'pob')
+        return SubtitleGatewayOpensubtitles.searchSubtitles('shichi nin no samurai 1954', 'pob')
             .then((results) => {
+                assert.isAbove(results.length, 1)
                 let result = results[0]
                 console.log(result)
 
