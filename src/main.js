@@ -2,6 +2,7 @@ var clc = require('cli-color')
 var inquirer = require('inquirer');
 var entity = require('./core/Entity');
 var formatter = require('./core/OutputFormatter');
+var userInput = require('./core/UserInputParser.js');
 
 
 function fetchTorrents(name) {
@@ -80,25 +81,26 @@ inquirer.prompt([
         fetchTorrents(answers.query),
         fetchSubtitles(answers.query, answers.language)
     ])
-}).then(torrentsAndSubtitles => {
-    let torrents = torrentsAndSubtitles[0]
-    let subtitles = torrentsAndSubtitles[1]
+}).then(([torrents, subtitles]) => {
     displayOptions(torrents, subtitles)
-    return inquirer.prompt([
+
+    return Promise.all([inquirer.prompt([
         {
             type: 'input',
-            name: 'query',
+            name: 'choice',
             message: 'Which one to stream?',
-            default: '1.1',
+            default: '0.0',
             validate: answer => {
-                return true
+                return userInput.validateChoice(answer, torrents.length, subtitles.length) || "Invalid choice."
             },
-            filter: answer => {
-                return 'xxx'
-            }
         }
-    ])
-}).then(function (answers) {
-    console.log(answers)
+    ]), torrents, subtitles])
+}).then(function ([answer, torrents, subtitles]) {
+    let [choosedTorrentIndex, choosedSubtitleIndex] = answer.choice.split('.')
+    let choosedTorrent = torrents[choosedTorrentIndex]
+    let choosedSubtitle = subtitles[choosedSubtitleIndex]
+
+    console.log(JSON.stringify(choosedTorrent))
+    console.log(JSON.stringify(choosedSubtitle))
     console.log('peerflix "magnet" --vlc --subtitles "subtitle.srt"');
 }).catch(error => console.log(error))
