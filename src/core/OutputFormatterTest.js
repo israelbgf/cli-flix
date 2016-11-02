@@ -14,7 +14,6 @@ describe('formatTorrent', function () {
         }))
 
         expect(result).to.equal('A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv]                 ')
-        expect(result).to.have.lengthOf(60)
     })
 
     it('formats a torrent size with left padding', function () {
@@ -23,7 +22,6 @@ describe('formatTorrent', function () {
         }))
 
         expect(result).to.equal(' 60.38 MiB')
-        expect(result).to.have.lengthOf(10)
     })
 
     it('formats a torrent seeders with right padding', function () {
@@ -32,7 +30,6 @@ describe('formatTorrent', function () {
         }))
 
         expect(result).to.equal('S:4696  ')
-        expect(result).to.have.lengthOf(8)
     })
 
     it('formats a torrent leechers with right padding', function () {
@@ -41,7 +38,6 @@ describe('formatTorrent', function () {
         }))
 
         expect(result).to.equal('L:4696  ')
-        expect(result).to.have.lengthOf(8)
     })
 
 
@@ -62,5 +58,21 @@ describe('formatTorrent', function () {
         assert.equal(result1, '1|A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv]                  600.38 MiB S:16853  L:3646  ')
         assert.equal(result2, '2|A.Nice.Episode.S07E02.1080p.WEB-DL.x264-FUM[ettv]              1.82 GiB S:4696   L:1191  ')
     })
+})
+
+describe('formatSubtitle', function () {
+
+    it('formats a subtitle', function () {
+        let result = formatter.formatSubtitle(new entity.Subtitle({
+            movieName: 'A Nice Episode',
+            subtitleName: 'A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv].srt',
+        }), 1)
+
+        expect(result).to.equal(
+            '1. A Nice Episode\n' +
+            '   A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv].srt')
+    })
+
+
 })
 

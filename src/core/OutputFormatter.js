@@ -24,10 +24,15 @@ function formatTorrentLeechers(torrent) {
     return pad("L:" + torrent.leechers, 8)
 }
 
+function formatSubtitle(subtitle, position){
+    return `${position}. ${subtitle.movieName}\n   ${subtitle.subtitleName}`
+}
+
 module.exports = {
     formatTorrent,
     formatTorrentName,
     formatTorrentSize,
     formatTorrentSeeders,
     formatTorrentLeechers,
+    formatSubtitle
 }

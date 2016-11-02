@@ -43,8 +43,8 @@ function displayOptions(torrents, subtitles) {
     console.log('')
     console.log('Subtitles')
     console.log(orange('--------'))
-    subtitles.forEach(item => {
-        console.log(item.subtitleName)
+    subtitles.forEach((item, position) => {
+        console.log(formatter.formatSubtitle(item, position))
     })
     console.log('')
 }
