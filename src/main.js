@@ -1,8 +1,7 @@
-var clc = require('cli-color')
 var inquirer = require('inquirer');
 var entity = require('./core/Entity');
 var formatter = require('./core/OutputFormatter');
-var userInput = require('./core/UserInputParser.js');
+var userInput = require('./core/UserInputParser');
 
 
 function fetchTorrents(name) {
@@ -32,31 +31,8 @@ function fetchSubtitles(name, language) {
 }
 
 
-function displayOptions(torrents, subtitles) {
-    let orange = clc.xterm(202)
 
-    console.log('')
-    console.log('Torrents')
-    console.log(orange('--------'))
-    torrents.forEach((item, position) => {
-        console.log(formatter.formatTorrent(item, position))
-    })
-    console.log('')
-    console.log('Subtitles')
-    console.log(orange('--------'))
-    subtitles.forEach((item, position) => {
-        console.log(formatter.formatSubtitle(item, position))
-    })
-    console.log('')
-}
-
-
-function clearTerminal() {
-    process.stdout.write(clc.reset)
-}
-
-
-clearTerminal()
+formatter.clearTerminal()
 inquirer.prompt([
     {
         type: 'input',
@@ -82,7 +58,7 @@ inquirer.prompt([
         fetchSubtitles(answers.query, answers.language)
     ])
 }).then(([torrents, subtitles]) => {
-    displayOptions(torrents, subtitles)
+    formatter.displayOptions(torrents, subtitles)
 
     return Promise.all([inquirer.prompt([
         {

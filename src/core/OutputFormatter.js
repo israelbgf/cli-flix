@@ -1,4 +1,5 @@
 var pad = require('pad');
+var clc = require('cli-color')
 
 function formatTorrent(torrent, position) {
     let torrentName = formatTorrentName(torrent)
@@ -24,9 +25,34 @@ function formatTorrentLeechers(torrent) {
     return pad("L:" + torrent.leechers, 8)
 }
 
-function formatSubtitle(subtitle, position){
+function formatSubtitle(subtitle, position) {
     return `${position}. ${subtitle.movieName}\n   ${subtitle.subtitleName}`
 }
+
+
+function displayOptions(torrents, subtitles) {
+    let orange = clc.xterm(202)
+
+    console.log('')
+    console.log('Torrents')
+    console.log(orange('--------'))
+    torrents.forEach((item, position) => {
+        console.log(formatTorrent(item, position))
+    })
+    console.log('')
+    console.log('Subtitles')
+    console.log(orange('--------'))
+    subtitles.forEach((item, position) => {
+        console.log(formatSubtitle(item, position))
+    })
+    console.log('')
+}
+
+
+function clearTerminal() {
+    process.stdout.write(clc.reset)
+}
+
 
 module.exports = {
     formatTorrent,
@@ -34,5 +60,7 @@ module.exports = {
     formatTorrentSize,
     formatTorrentSeeders,
     formatTorrentLeechers,
-    formatSubtitle
+    formatSubtitle,
+    clearTerminal,
+    displayOptions,
 }
