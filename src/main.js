@@ -1,16 +1,19 @@
 var clc = require('cli-color')
 var inquirer = require('inquirer');
+var entity = require('./core/Entity');
+var formatter = require('./core/OutputFormatter');
 
 
 function fetchTorrents(name) {
     var torrents = []
     for (var i = 0; i < 5; i++) {
-        torrents.push({
+        torrents.push(new entity.Torrent({
             name: 'torrent [YIFI]' + i,
-            size: 10,
+            size: '10 Mib',
             seeders: 123,
             leechers: 123,
-        })
+            magnetLink: 'magnet-' + i
+        }))
     }
     return Promise.resolve(torrents)
 }
@@ -34,8 +37,8 @@ function displayOptions(torrents, subtitles) {
     console.log('')
     console.log('Torrents')
     console.log(orange('--------'))
-    torrents.forEach(item => {
-        console.log(item.name.replace('YIFI', orange('YIFI')))
+    torrents.forEach((item, position) => {
+        console.log(formatter.formatTorrent(item, position))
     })
     console.log('')
     console.log('Subtitles')
