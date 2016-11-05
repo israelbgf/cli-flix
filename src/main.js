@@ -71,13 +71,25 @@ function askForWhichTorrentAndSubtitle(torrents, subtitles) {
     return Promise.all([inquirer.prompt([
         {
             type: 'input',
-            name: 'choice',
-            message: 'Which one to stream?',
-            default: '0.0',
+            name: 'torrentIndex',
+            message: 'Which torrent to stream?',
+            default: '0',
+            filter: parseInt,
             validate: answer => {
-                return userInput.validateChoice(answer, torrents.length, subtitles.length) || "Invalid choice."
+                return answer < torrents.length || "Invalid choice."
+            },
+        },
+        {
+            type: 'input',
+            name: 'subtitleIndex',
+            message: 'Which subtitle to use?',
+            default: '0',
+            filter: parseInt,
+            validate: answer => {
+                return answer < subtitles.length || "Invalid choice."
             },
         }
+
     ]), torrents, subtitles]);
 }
 
@@ -95,9 +107,8 @@ Promise.all([fetchTorrents(argv.name), fetchSubtitles(argv.name, argv.language)]
         return askForWhichTorrentAndSubtitle(torrents, subtitles)
     })
     .then(function ([answer, torrents, subtitles]) {
-        let [choosedTorrentIndex, choosedSubtitleIndex] = answer.choice.split('.')
-        let choosedTorrent = torrents[choosedTorrentIndex]
-        let choosedSubtitle = subtitles[choosedSubtitleIndex]
+        let choosedTorrent = torrents[answer.torrentIndex]
+        let choosedSubtitle = subtitles[answer.subtitleIndex]
         return Promise.all([choosedTorrent, downloadSubtitle(choosedSubtitle, '.')])
     })
     .then(function ([torrent, subtitle]) {
