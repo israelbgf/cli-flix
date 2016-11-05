@@ -1,8 +1,8 @@
-var inquirer = require('inquirer');
-var entity = require('./core/Entity');
-var formatter = require('./core/OutputFormatter');
-var userInput = require('./core/UserInputParser');
-
+var inquirer = require('inquirer')
+var entity = require('./core/Entity')
+var formatter = require('./core/OutputFormatter')
+var userInput = require('./core/UserInputParser')
+var yargs = require('yargs')
 
 function fetchTorrents(name) {
     var torrents = []
@@ -41,7 +41,33 @@ function downloadSubtitle(subtitle, destination) {
     return Promise.resolve('/tmp/subtitle.srt')
 }
 
-function askForChoice(torrents, subtitles) {
+function parseUserInput() {
+    return yargs
+        .detectLocale(false)
+        .usage('Usage: $0 -name "Nice Series s01e02" -l pob -hl keyword1 keyword2')
+        .options({
+            'n': {
+                alias: 'name',
+                demand: true,
+                describe: 'Name of the movie to search for',
+                type: 'string'
+            },
+            'l': {
+                alias: 'language',
+                default: 'pob',
+                describe: 'Language to search for subtitle',
+                type: 'string'
+            },
+            'hl': {
+                alias: 'highlight',
+                default: ['x', 'z'],
+                describe: 'Keywords to highlight in the search result',
+                type: 'array'
+            },
+        }).argv;
+}
+
+function askForWhichTorrentAndSubtitle(torrents, subtitles) {
     return Promise.all([inquirer.prompt([
         {
             type: 'input',
@@ -59,36 +85,14 @@ function startStreaming(torrent, subtitle) {
     console.log(`peerflix "${torrent.magnetLink}" --vlc --subtitles ${subtitle}"`)
 }
 
+
 formatter.clearTerminal()
-inquirer.prompt([
-        {
-            type: 'input',
-            name: 'query',
-            message: 'Which torrent are you looking for?',
-            default: '',
-            validate: (answer) => {
-                return true
-            }
-        },
-        {
-            type: 'input',
-            name: 'language',
-            default: 'pob',
-            message: 'Which language for the subtitle?',
-            validate: (answer) => {
-                return true
-            }
-        }
-    ])
-    .then(answers => {
-        return Promise.all([
-            fetchTorrents(answers.query),
-            fetchSubtitles(answers.query, answers.language)
-        ])
-    })
+let argv = parseUserInput()
+
+Promise.all([fetchTorrents(argv.name), fetchSubtitles(argv.name, argv.language)])
     .then(([torrents, subtitles]) => {
         formatter.displayOptions(torrents, subtitles)
-        return askForChoice(torrents, subtitles)
+        return askForWhichTorrentAndSubtitle(torrents, subtitles)
     })
     .then(function ([answer, torrents, subtitles]) {
         let [choosedTorrentIndex, choosedSubtitleIndex] = answer.choice.split('.')
@@ -99,4 +103,4 @@ inquirer.prompt([
     .then(function ([torrent, subtitle]) {
         startStreaming(torrent, subtitle)
     })
-    .catch(error => console.log(error))
+    .catch(console.log)
