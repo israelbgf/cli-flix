@@ -14,7 +14,7 @@ class UncompressionGatewayNode {
             output.on('close', function () {
                 input.unpipe(gunzip)
                 input.unpipe(output)
-                resolve()
+                resolve(dest)
             })
         })
     }

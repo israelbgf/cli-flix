@@ -30,36 +30,18 @@ function fetchSubtitles(name, language) {
     return Promise.resolve(subtitles)
 }
 
+function downloadSubtitle(subtitle, destination) {
+    //new HttpDownloadGateway().download(choosedSubtitle.downloadLink, '.')
+    //    .then(downloadedFile => {
+    //        return new UncompressionGatewayNode().uncompress(downloadedFile, './' + choosedSubtitle.subtitleName)
+    //    })
+    //    .then(uncompressedSubtitle => {
+    //
+    //    })
+    return Promise.resolve('/tmp/subtitle.srt')
+}
 
-
-formatter.clearTerminal()
-inquirer.prompt([
-    {
-        type: 'input',
-        name: 'query',
-        message: 'Which torrent are you looking for?',
-        default: '',
-        validate: (answer) => {
-            return true
-        }
-    },
-    {
-        type: 'input',
-        name: 'language',
-        default: 'pob',
-        message: 'Which language for the subtitle?',
-        validate: (answer) => {
-            return true
-        }
-    }
-]).then(answers => {
-    return Promise.all([
-        fetchTorrents(answers.query),
-        fetchSubtitles(answers.query, answers.language)
-    ])
-}).then(([torrents, subtitles]) => {
-    formatter.displayOptions(torrents, subtitles)
-
+function askForChoice(torrents, subtitles) {
     return Promise.all([inquirer.prompt([
         {
             type: 'input',
@@ -70,13 +52,51 @@ inquirer.prompt([
                 return userInput.validateChoice(answer, torrents.length, subtitles.length) || "Invalid choice."
             },
         }
-    ]), torrents, subtitles])
-}).then(function ([answer, torrents, subtitles]) {
-    let [choosedTorrentIndex, choosedSubtitleIndex] = answer.choice.split('.')
-    let choosedTorrent = torrents[choosedTorrentIndex]
-    let choosedSubtitle = subtitles[choosedSubtitleIndex]
+    ]), torrents, subtitles]);
+}
 
-    console.log(JSON.stringify(choosedTorrent))
-    console.log(JSON.stringify(choosedSubtitle))
-    console.log('peerflix "magnet" --vlc --subtitles "subtitle.srt"');
-}).catch(error => console.log(error))
+function startStreaming(torrent, subtitle) {
+    console.log(`peerflix "${torrent.magnetLink}" --vlc --subtitles ${subtitle}"`)
+}
+
+formatter.clearTerminal()
+inquirer.prompt([
+        {
+            type: 'input',
+            name: 'query',
+            message: 'Which torrent are you looking for?',
+            default: '',
+            validate: (answer) => {
+                return true
+            }
+        },
+        {
+            type: 'input',
+            name: 'language',
+            default: 'pob',
+            message: 'Which language for the subtitle?',
+            validate: (answer) => {
+                return true
+            }
+        }
+    ])
+    .then(answers => {
+        return Promise.all([
+            fetchTorrents(answers.query),
+            fetchSubtitles(answers.query, answers.language)
+        ])
+    })
+    .then(([torrents, subtitles]) => {
+        formatter.displayOptions(torrents, subtitles)
+        return askForChoice(torrents, subtitles)
+    })
+    .then(function ([answer, torrents, subtitles]) {
+        let [choosedTorrentIndex, choosedSubtitleIndex] = answer.choice.split('.')
+        let choosedTorrent = torrents[choosedTorrentIndex]
+        let choosedSubtitle = subtitles[choosedSubtitleIndex]
+        return Promise.all([choosedTorrent, downloadSubtitle(choosedSubtitle, '.')])
+    })
+    .then(function ([torrent, subtitle]) {
+        startStreaming(torrent, subtitle)
+    })
+    .catch(error => console.log(error))
