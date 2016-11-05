@@ -3,7 +3,7 @@ function validateChoice(input, numberOfTorrents, numberOfSubtitles) {
         return false;
 
     [a, b] = input.split('.').map(item => parseInt(item))
-    return a <= numberOfTorrents && b <= numberOfSubtitles
+    return a < numberOfTorrents && b < numberOfSubtitles
 }
 
 module.exports = {

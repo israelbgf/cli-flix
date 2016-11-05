@@ -30,8 +30,8 @@ describe('validateChoice', function () {
         assert.isTrue(userInput.validateChoice('0.0', 1, 1))
     })
 
-    it('is true when choosed torrent and subtitle are is equal than the number of torrents and subtitles', function () {
-        assert.isTrue(userInput.validateChoice('1.1', 1, 1))
+    it('is false when choosed torrent and subtitle are is equal than the number of torrents and subtitles', function () {
+        assert.isFalse(userInput.validateChoice('1.1', 1, 1))
     })
 
 })
