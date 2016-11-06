@@ -1,45 +1,9 @@
 var inquirer = require('inquirer')
-var entity = require('./core/Entity')
 var formatter = require('./core/OutputFormatter')
-var userInput = require('./core/UserInputParser')
 var yargs = require('yargs')
+var torrentGateway = require('./gateways/TorrentGatewayInMemory')
+var subtitleGateway = require('./gateways/SubtitleGatewayInMemory')
 
-function fetchTorrents(name) {
-    var torrents = []
-    for (var i = 0; i < 5; i++) {
-        torrents.push(new entity.Torrent({
-            name: 'torrent [YIFI]' + i,
-            size: '10 Mib',
-            seeders: 123,
-            leechers: 123,
-            magnetLink: 'magnet-' + i
-        }))
-    }
-    return Promise.resolve(torrents)
-}
-
-
-function fetchSubtitles(name, language) {
-    var subtitles = []
-    for (var i = 0; i < 5; i++) {
-        subtitles.push({
-            movieName: 'subtitle ' + i,
-            subtitleName: 'subtitle_' + i + '.srt',
-        })
-    }
-    return Promise.resolve(subtitles)
-}
-
-function downloadSubtitle(subtitle, destination) {
-    //new HttpDownloadGateway().download(choosedSubtitle.downloadLink, '.')
-    //    .then(downloadedFile => {
-    //        return new UncompressionGatewayNode().uncompress(downloadedFile, './' + choosedSubtitle.subtitleName)
-    //    })
-    //    .then(uncompressedSubtitle => {
-    //
-    //    })
-    return Promise.resolve('/tmp/subtitle.srt')
-}
 
 function parseUserInput() {
     return yargs
@@ -101,7 +65,10 @@ function startStreaming(torrent, subtitle) {
 formatter.clearTerminal()
 let argv = parseUserInput()
 
-Promise.all([fetchTorrents(argv.name), fetchSubtitles(argv.name, argv.language)])
+Promise.all([
+        torrentGateway.fetchTorrents(argv.name),
+        subtitleGateway.fetchSubtitles(argv.name, argv.language)
+    ])
     .then(([torrents, subtitles]) => {
         formatter.displayOptions(torrents, subtitles)
         return askForWhichTorrentAndSubtitle(torrents, subtitles)
@@ -109,7 +76,10 @@ Promise.all([fetchTorrents(argv.name), fetchSubtitles(argv.name, argv.language)]
     .then(function ([answer, torrents, subtitles]) {
         let choosedTorrent = torrents[answer.torrentIndex]
         let choosedSubtitle = subtitles[answer.subtitleIndex]
-        return Promise.all([choosedTorrent, downloadSubtitle(choosedSubtitle, '.')])
+        return Promise.all([
+            choosedTorrent,
+            subtitleGateway.downloadSubtitle(choosedSubtitle, '.')
+        ])
     })
     .then(function ([torrent, subtitle]) {
         startStreaming(torrent, subtitle)
