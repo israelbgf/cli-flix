@@ -72,7 +72,7 @@ Promise.all([
         subtitleGateway.fetchSubtitles(argv.name, argv.language)
     ])
     .then(([torrents, subtitles]) => {
-        formatter.displayOptions(torrents, subtitles)
+        formatter.displayOptions(torrents, subtitles, argv.highlight)
         return askForWhichTorrentAndSubtitle(torrents, subtitles)
     })
     .then(function ([answer, torrents, subtitles]) {

@@ -1,5 +1,5 @@
 class Torrent {
-    constructor({name, seeders, leechers, size, magnetLink}) {
+    constructor({name='', seeders, leechers, size, magnetLink}) {
         this.name = name
         this.seeders = seeders
         this.leechers = leechers
@@ -9,7 +9,7 @@ class Torrent {
 }
 
 class Subtitle {
-    constructor({movieName, subtitleName, downloadLink}) {
+    constructor({movieName='', subtitleName='', downloadLink}) {
         this.movieName = movieName
         this.subtitleName = subtitleName
         this.downloadLink = downloadLink

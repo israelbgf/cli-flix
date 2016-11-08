@@ -55,8 +55,8 @@ describe('formatTorrent', function () {
             size: '1.82 GiB'
         }), 2)
 
-        assert.equal(result1, '1|A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv]                  600.38 MiB S:16853  L:3646  ')
-        assert.equal(result2, '2|A.Nice.Episode.S07E02.1080p.WEB-DL.x264-FUM[ettv]              1.82 GiB S:4696   L:1191  ')
+        assert.equal(result1, '1. A.Nice.Episode.S07E02.WEB-DL.x264-FUM[ettv]                  600.38 MiB S:16853  L:3646  ')
+        assert.equal(result2, '2. A.Nice.Episode.S07E02.1080p.WEB-DL.x264-FUM[ettv]              1.82 GiB S:4696   L:1191  ')
     })
 })
 
