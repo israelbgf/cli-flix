@@ -6,7 +6,7 @@ var path = require('path')
 var assert = require('chai').assert
 
 var fixtures = require('../../test/FixtureUtils')
-var UncompressionGatewayNode = require('./UncompressionGatewayNode')
+var uncompressionGateway = require('./UncompressionGatewayNode')
 
 
 describe('UncompressionGatewayNode', function () {
@@ -19,7 +19,7 @@ describe('UncompressionGatewayNode', function () {
         let input = 'test/fixture/hello.txt.gz'
         let output = 'test/output/hello.txt'
 
-        return new UncompressionGatewayNode().uncompress(input, output)
+        return uncompressionGateway.uncompress(input, output)
             .then(() => {
                 let content = fs.readFileSync(output, 'utf8')
                 assert.equal(content, 'Hello World!\n')

@@ -3,6 +3,8 @@ var formatter = require('./core/OutputFormatter')
 var yargs = require('yargs')
 var torrentGateway = require('./gateways/TorrentGatewayInMemory')
 var subtitleGateway = require('./gateways/SubtitleGatewayInMemory')
+//var torrentGateway = require('./gateways/TorrentGatewayPirateBay')
+//var subtitleGateway = require('./gateways/SubtitleGatewayOpensubtitles')
 
 
 function parseUserInput() {
@@ -58,7 +60,7 @@ function askForWhichTorrentAndSubtitle(torrents, subtitles) {
 }
 
 function startStreaming(torrent, subtitle) {
-    console.log(`peerflix "${torrent.magnetLink}" --vlc --subtitles ${subtitle}"`)
+    console.log(`peerflix "${torrent.magnetLink}" --vlc --subtitles "${subtitle}"`)
 }
 
 

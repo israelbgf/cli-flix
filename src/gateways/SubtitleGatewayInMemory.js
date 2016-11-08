@@ -10,13 +10,6 @@ function fetchSubtitles(name, language) {
 }
 
 function downloadSubtitle(subtitle, destination) {
-    //new HttpDownloadGateway().download(choosedSubtitle.downloadLink, '.')
-    //    .then(downloadedFile => {
-    //        return new UncompressionGatewayNode().uncompress(downloadedFile, './' + choosedSubtitle.subtitleName)
-    //    })
-    //    .then(uncompressedSubtitle => {
-    //
-    //    })
     return Promise.resolve('/tmp/subtitle.srt')
 }
 
