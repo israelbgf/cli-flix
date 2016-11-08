@@ -1,6 +1,7 @@
 var pad = require('pad');
 var clc = require('cli-color')
 var core = require('./SuggestMatch')
+let orange = clc.xterm(202)
 
 function formatTorrent(torrent, position) {
     let torrentName = formatTorrentName(torrent)
@@ -31,9 +32,25 @@ function formatSubtitle(subtitle, position) {
 }
 
 
-function displayOptions(torrents, subtitles, highlight) {
-    let orange = clc.xterm(202)
+function displaySuggestion(torrents, subtitles, highlight) {
+    try {
+        var [torrent, subtitle] = core.suggestMatch(torrents, subtitles, highlight)
+        let torrentChoiceIndex = null, subtitleChoiceIndex = null
+        torrents.forEach((t, i) => {
+            if (t.name == torrent.name) torrentChoiceIndex = i
+        })
+        subtitles.forEach((s, i) => {
+            if (s.subtitleName == subtitle.subtitleName) subtitleChoiceIndex = i
+        })
 
+        console.log(`I recommend the following choice (${orange(torrentChoiceIndex)} and ${orange(subtitleChoiceIndex)}):`)
+        console.log(torrent.name, ' / ', subtitle.subtitleName)
+        console.log(torrent.size, formatTorrentSeeders(torrent), formatTorrentLeechers(torrent))
+    } catch (e) {
+        console.log('Your keywords were useless bro. Good luck.')
+    }
+}
+function displayOptions(torrents, subtitles, highlight) {
     console.log('')
     console.log('Torrents')
     console.log(orange('--------'))
@@ -51,14 +68,7 @@ function displayOptions(torrents, subtitles, highlight) {
     console.log('')
     console.log('Suggestion')
     console.log(orange('--------'))
-    try {
-        var [torrent, subtitle] = core.suggestMatch(torrents, subtitles, highlight)
-        console.log(torrent.name)
-        console.log(subtitle.subtitleName)
-        console.log(torrent.size)
-    } catch (e) {
-        console.log('Your keywords were useless bro. Good luck.')
-    }
+    displaySuggestion(torrents, subtitles, highlight)
 
     console.log('')
 }
