@@ -1,10 +1,15 @@
 var inquirer = require('inquirer')
 var formatter = require('./core/OutputFormatter')
 var yargs = require('yargs')
-var torrentGateway = require('./gateways/TorrentGatewayInMemory')
-var subtitleGateway = require('./gateways/SubtitleGatewayInMemory')
-//var torrentGateway = require('./gateways/TorrentGatewayPirateBay')
-//var subtitleGateway = require('./gateways/SubtitleGatewayOpensubtitles')
+var child_process = require('child_process');
+
+if(process.env.DEVELOPMENT){
+    var torrentGateway = require('./gateways/TorrentGatewayInMemory')
+    var subtitleGateway = require('./gateways/SubtitleGatewayInMemory')
+} else {
+    var torrentGateway = require('./gateways/TorrentGatewayPirateBay')
+    var subtitleGateway = require('./gateways/SubtitleGatewayOpensubtitles')
+}
 
 
 function parseUserInput() {
@@ -59,8 +64,9 @@ function askForWhichTorrentAndSubtitle(torrents, subtitles) {
     ]), torrents, subtitles]);
 }
 
-function startStreaming(torrent, subtitle) {
-    console.log(`peerflix "${torrent.magnetLink}" --vlc --subtitles "${subtitle}"`)
+function startStreaming(magnetLink, subtitle) {
+    console.log('Initializing streaming, this can take a while...')
+    child_process.spawn('peerflix', [magnetLink, '--vlc', '--subtitles', subtitle])
 }
 
 
