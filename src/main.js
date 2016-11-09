@@ -90,6 +90,6 @@ Promise.all([
         ])
     })
     .then(function ([torrent, subtitle]) {
-        startStreaming(torrent, subtitle)
+        startStreaming(torrent.magnetLink, subtitle)
     })
     .catch(console.log)
