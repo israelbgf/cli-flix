@@ -2,6 +2,7 @@ var inquirer = require('inquirer')
 var formatter = require('./core/OutputFormatter')
 var yargs = require('yargs')
 var child_process = require('child_process');
+var playerGateway = require('./gateways/TorrentStreamPlayerGatewayPeerflix');
 
 if(process.env.DEVELOPMENT){
     var torrentGateway = require('./gateways/TorrentGatewayInMemory')
@@ -64,12 +65,6 @@ function askForWhichTorrentAndSubtitle(torrents, subtitles) {
     ]), torrents, subtitles]);
 }
 
-function startStreaming(magnetLink, subtitle) {
-    console.log('Initializing streaming, this can take a while...')
-    child_process.spawn('peerflix', [magnetLink, '--vlc', '--subtitles', subtitle])
-}
-
-
 formatter.clearTerminal()
 let argv = parseUserInput()
 
@@ -90,6 +85,6 @@ Promise.all([
         ])
     })
     .then(function ([torrent, subtitle]) {
-        startStreaming(torrent.magnetLink, subtitle)
+        playerGateway.startStreaming(torrent.magnetLink, subtitle)
     })
     .catch(console.log)
