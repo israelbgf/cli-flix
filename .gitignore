@@ -3,5 +3,5 @@
 .coverage/
 test/output
 dist/
-vlc-flix.iml
+cli-flix.iml
 .npm-debug.log
