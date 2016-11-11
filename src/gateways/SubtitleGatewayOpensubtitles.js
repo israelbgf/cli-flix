@@ -1,7 +1,7 @@
 var opensubtitles = require('subtitler')
 var path = require('path')
 var uncompressionGateway = require('./UncompressionGatewayNode.js');
-var downloadGateway = require('./HttpDownloadGatewayNode.js');
+var downloadGateway = require('./DownloadGatewayNode.js');
 var entity = require('../core/Entity')
 
 function fetchSubtitles(name, language) {

@@ -6,7 +6,7 @@ var path = require('path')
 var assert = require('chai').assert
 
 var fixtures = require('../../test/FixtureUtils.js')
-var downloadGatewayNode = require('./HttpDownloadGatewayNode')
+var downloadGatewayNode = require('./DownloadGatewayNode')
 
 
 describe('HttpDownloadGatewayNode', function () {

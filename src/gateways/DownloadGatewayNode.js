@@ -3,7 +3,7 @@ var fs = require('fs')
 var path = require('path');
 
 function download(url, destinationFolder) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         let fileName = path.basename(url)
         var downloadedFileLocation = path.resolve(path.join(destinationFolder, fileName))
         var file = fs.createWriteStream(downloadedFileLocation)
