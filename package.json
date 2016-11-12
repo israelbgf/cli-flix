@@ -1,8 +1,13 @@
 {
   "name": "cli-flix",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stream torrents to your VLC player with subtitles easily from the command prompt",
-  "keywords": ["cli", "stream", "torrent", "subtitle"],
+  "keywords": [
+    "cli",
+    "stream",
+    "torrent",
+    "subtitle"
+  ],
   "main": "./lib/app.js",
   "bin": "./lib/index.js",
   "dependencies": {
