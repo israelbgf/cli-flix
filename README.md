@@ -6,7 +6,8 @@ Stream torrents to your VLC player with subtitles easily from the command prompt
 
 ## usage
 ```sh
-node lib/index.js --name "Nice Movie" --keywords "KILLERS" "FUM"
+npm install -g cli-flix
+cli-flix --name "Nice Movie" --lang pob --keywords "RELEASE1" "RELEASE2"
 ```
 
 The keywords are used to figure the best match between Movie/Subtitle.
