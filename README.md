@@ -14,4 +14,6 @@ The keywords are used to figure the best match between Movie/Subtitle.
 
 ## pre-requisites
 
-You must have VLC installed and have a Node version of 6+.
+- Node version of 6+.
+- VLC installed.
+- Windows users must have Git installed or it will fail when you try to install `cli-flix` with `npm`
