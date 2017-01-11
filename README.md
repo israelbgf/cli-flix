@@ -12,6 +12,16 @@ cli-flix --name "Nice Movie" --lang pob --keywords "RELEASE1" "RELEASE2"
 
 The keywords are used to figure the best match between Movie/Subtitle.
 
+## config file
+
+You may create a file called `.cli-flix.json` in your home directory to store keywords that should be always used. Example:
+
+```json
+{
+  "defaultKeywords": ["kw1", "kw2", "kw3"]
+}
+```
+
 ## pre-requisites
 
 - Node version of 6+.
