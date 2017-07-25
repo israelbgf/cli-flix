@@ -1,6 +1,6 @@
 {
   "name": "cli-flix",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Stream torrents to your VLC player with subtitles easily from the command prompt",
   "keywords": [
     "cli",
