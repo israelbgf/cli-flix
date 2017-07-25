@@ -5,3 +5,9 @@ test/output
 dist/
 cli-flix.iml
 .npm-debug.log
+.DS_Store
+lib/.DS_Store
+lib/core/.DS_Store
+node_modules/
+test/.DS_Store
+test/fixture/.DS_Store
